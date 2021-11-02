@@ -1,0 +1,16 @@
+*.js
+!lib/application/lambda/*.js
+!jest.config.js
+*.d.ts
+node_modules
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out/
+package-lock.json
+local_commands.txt
+.DS_Store
+*/.DS_Store
+backup
+.idea/
+.npmignore
