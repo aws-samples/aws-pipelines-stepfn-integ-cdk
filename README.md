@@ -3,12 +3,16 @@
     Pipeline and Stage objects are used to build a self-configuring pipeline which deploys and tests a sample application by invoking a Step Functions workflow.
     CDK-Pipelines simplifies the CI/CD of applications using CodePipeline by updating the pipeline and the stacks deployed by the pipeline
     in a single commit.
+    The Cdkpipeline below deploys 3 stages - 
+    1) Kinesis application stack deployed to DEV env
+    2) StepFunction stack with Pre and Post steps. This stack is invoked to run a StepFunctions statemachine to test the application stack 
+    3) Kinesis application stack deployed to PROD env
 
 ## Architecture
 * ### Generic CDK Pipeline with mutliple Stages
 ![GenericCdkPipeline](docs/generic_cdk_pipeline.png)
 
-* ### Sample CDK Pipeline deploying to DEV and PROD accounts 
+* ### Sample CDK Pipeline deploying application stack to DEV and PROD accounts 
 ![CdkPipeline](docs/cdk_pipeline_detail.png)
 
 * ### Integration Test using StepFunctions state machine:
@@ -52,13 +56,13 @@ aws configure --profile prod
   }
 }
 
-# bootstrap DEV environment for provisioning the pipeline:
+# bootstrap dev(account=111111111111, region=us-west-2) environment for provisioning the pipeline:
 env CDK_NEW_BOOTSTRAP=1 npx cdk bootstrap \
     --profile dev \
     --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess \
     aws://111111111111/us-west-2
 
-# bootstrap PROD environment for deploying CDK applications into using a pipeline in account 111111111111:
+# bootstrap prod(account=222222222222, region=us-west-2) environment for deploying CDK applications into using a pipeline in account 111111111111:
 env CDK_NEW_BOOTSTRAP=1 npx cdk bootstrap \
     --profile prod \
     --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess \
@@ -102,11 +106,10 @@ git push -u origin main
 # The pipeline should start executing. Monitor pipeline execution from the AWS Console for CodePipeline
 
 ```
-* ### Add additional stages and update the pipeline
+* ### Add additional stages(Integration Test stage, Prod Stage) and update the pipeline
 ```shell
-# Add Integration Test stage
-git add . ; git commit -m "add integ-test stage"
-git push
+# Add Integration Test stage - uncomment 'Integration Test stage' in the lib/cdk-pipeline.ts 
+git add . ; git commit -m "add integ-test stage"; git push
 ```
 ## License
 
