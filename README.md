@@ -1,12 +1,11 @@
 # CDK Pipeline integration with AWS Step Functions
-    This project contains Typescript CDK for a CodePipeline stack implemented using the CDK-Pipelines(aws-cdk/pipelines) construct. 
-    Pipeline and Stage objects are used to build a self-configuring pipeline which deploys and tests a sample application by invoking a Step Functions workflow.
-    CDK-Pipelines simplifies the CI/CD of applications using CodePipeline by updating the pipeline and the stacks deployed by the pipeline
-    in a single commit.
-    The Cdkpipeline below deploys 3 stages - 
-    1) Kinesis application stack deployed to DEV env
-    2) StepFunction stack with Pre and Post steps. The StepFunctions statemachine is invoked to test the application. 
-    3) Kinesis application stack deployed to PROD env
+    This project contains Typescript CDK for AWS CodePipeline stack, implemented using the CDK-Pipelines (aws-cdk/pipelines) construct. 
+    The pipeline and stage objects from the construct are used to build a self-configuring AWS CodePipeline, which then deploys and tests a sample application by   invoking AWS Step Functions workflow.
+    The CDK-Pipelines construct simplifies the CI/CD of applications using AWS CodePipeline by updating the pipeline and the stacks deployed by it in a single commit.
+    The CDK-Pipeline below deploys 3 stages - 
+        1) Amazon Kinesis application stack deployed to DEV env
+        2) AWS Step Functions stack with Pre and Post steps. The AWS Step Functions state machine is invoked to test the application. 
+        3) Amazon Kinesis application stack deployed to PROD env
 
 ## Architecture
 * ### Generic CDK Pipeline with mutliple Stages
@@ -15,13 +14,13 @@
 * ### Sample CDK Pipeline deploying application stack to DEV and PROD accounts 
 ![CdkPipeline](docs/cdk_pipeline_detail.png)
 
-* ### Integration Test using StepFunctions state machine:
+* ### Integration Test using AWS Step Functions state machine:
 
-  * The sample IntegrationTest stack deployed contains a Step Functions workflow which generates input data for the firehose stream and validate the output data.
-  The execution steps are performed by Lambda functions defined using Boto3 (Python SDK for AWS).
+  * The sample IntegrationTest stack deployed contains a AWS Step Functions workflow which generates input data for the Amazon Kinesis application and validates the output data.
+  The workflow tasks are performed by AWS Lambda functions defined using Boto3 (Python SDK for AWS).
   
-  * The sample application stack contains a Firehose stream with a Lambda processor and S3 destination.
-    This pattern can be used to test an application/infrastructure stack by defining the appropriate Step Function workflow in the IntegrationTest stack.
+  * The sample application stack contains Amazon Kinesis Data Firehose stream configured with Amazon S3 destination.
+    This pattern can be used to test an application/infrastructure stack by defining the appropriate AWS Step Functions workflow in the IntegrationTest stack.
 
 ![StateMachine](docs/app_sfn.png)
 
@@ -31,7 +30,7 @@
     * Install AWS CLI, Git, Node.js, TypeScript
     * Install AWS CDK v1.120 (For later versions, you can update the package.json)
     * 2 AWS accounts are required - (to be used as Dev and Prod accounts)
-    * IAM user with HTTPS Git credentials for CodeCommit in Dev Account
+    * IAM user with HTTPS Git credentials for AWS CodeCommit in Dev Account
       <br/>
 
 * ### Product versions
@@ -75,27 +74,27 @@ cd aws-mutating-cdkpipeline-gitlab
 # Install NodeJS dependencies
 npm i
 
-# Create CodeCommit repository
+# Create AWS CodeCommit repository
 aws code-commit create-repository aws-mutating-cdkpipeline-cc --profile dev
 
-# Note the CodeCommit repository url from the command output
+# Note the repository url from the command output
 
 ```
 
 * ### Deploy pipeline stack
 ```shell
-# Create CodePipeline
+# Create pipeline
 cdk deploy CdkPipelineStack --profile dev
 
 ```
-* ### Upload code to CodeCommit repository and trigger the pipeline
+* ### Upload code to AWS CodeCommit repository and trigger the pipeline
 ```shell
-# Re-initialize current git repository to push code to the CodeCommit repository
+# Re-initialize current git repository and push the code to the CodeCommit repository
 rm -rf .git
 git init  
 git branch -m main # Optional if default branch is already main
 
-# Set remote origin, use the CodeCommit url from the stack outputs of the CodePipeline stack
+# Set remote origin, use the CodeCommit repository url from the stack outputs of CdkPipelineStack
 git remote add origin https://git-codecommit.us-west-2.amazonaws.com/v1/repos/aws-mutating-cdkpipeline-cc
 
 # Commit and Push code
