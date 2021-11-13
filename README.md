@@ -5,7 +5,7 @@
     in a single commit.
     The Cdkpipeline below deploys 3 stages - 
     1) Kinesis application stack deployed to DEV env
-    2) StepFunction stack with Pre and Post steps. This stack is invoked to run a StepFunctions statemachine to test the application stack 
+    2) StepFunction stack with Pre and Post steps. The StepFunctions statemachine is invoked to test the application. 
     3) Kinesis application stack deployed to PROD env
 
 ## Architecture
